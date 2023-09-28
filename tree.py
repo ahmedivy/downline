@@ -1,4 +1,5 @@
 import graphviz
+
 from typing import Self
 
 

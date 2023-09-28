@@ -12,13 +12,15 @@ class Node:
         self.rights: list[Self] = []
         self.ancestors: list[Self] = parent.ancestors + [parent] if parent else []
 
-        self.balance = 0
+        self.balance: float = 0
 
         if parent:
             self.parent.add_child(self)
 
-    def give_commission(self, commission: float = 0.5):
-        ...
+    def calc_commission(self, commission: float = 0.5) -> float:
+        for left, right in self.get_pairs():
+            return left.calc_commission() + right.calc_commission() + commission
+        return 0.0
 
     def add_child(self, child: Self):
         if len(self.lefts) == len(self.rights):
@@ -33,14 +35,14 @@ class Node:
         return self.__repr__()
 
     @property
-    def children(self):
+    def children(self) -> list[Self]:
         return self.lefts + self.rights
 
     @property
-    def siblings(self):
+    def siblings(self) -> list[Self]:
         return self.parent.children - [self]
 
-    def get_pairs(self):
+    def get_pairs(self) -> list[tuple[Self, Self]]:
         return [(left, right) for left, right in zip(self.lefts, self.rights)]
 
 
@@ -58,39 +60,6 @@ def main():
     a = Node("a")
     b = Node("b", a)
     c = Node("c", a)
-
-    d = Node("d", b)
-    e = Node("e", b)
-
-    f = Node("f", a)
-    g = Node("g", c)
-
-    h = Node("h", c)
-    i = Node("i", c)
-
-    j = Node("j", d)
-    k = Node("k", d)
-
-    l = Node("l", e)
-    m = Node("m", e)
-
-    n = Node("n", f)
-    o = Node("o", f)
-
-    p = Node("p", g)
-    q = Node("q", g)
-
-    r = Node("r", h)
-    s = Node("s", h)
-
-    t = Node("t", i)
-    u = Node("u", i)
-
-    v = Node("v", j)
-    w = Node("w", j)
-
-    x = Node("x", k)
-    y = Node("y", k)
 
     print_tree(a).render("out/tree", view=True, format="png")
 

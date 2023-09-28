@@ -4,18 +4,8 @@ from typing import Self
 from itertools import zip_longest
 
 
-class Pair:
-    """
-    Can be a pair of nodes or a pair of pairs or a pair of pairs of pairs etc.
-    """
-
-    def __init__(self, left, right):
-        self.left = left
-        self.right = right
-
-
 class Commission:
-    def __init__(self, amount: float, pair: Pair):
+    def __init__(self, amount: float, pair):
         self.amount = amount
         self.pair = pair
 
@@ -34,9 +24,7 @@ class Node:
             self.parent.add_child(self)
 
     def calc_commission(self, commission: float = 0.5) -> float:
-        for left, right in self.get_pairs():
-            return left.calc_commission() + right.calc_commission() + commission
-        return 0.0
+        ...
 
     def add_child(self, child: Self):
         if len(self.lefts) == len(self.rights):
@@ -58,8 +46,8 @@ class Node:
     def siblings(self) -> list[Self]:
         return self.parent.children - [self]
 
-    def get_pairs(self) -> list[Pair]:
-        return [Pair(left, right) for left, right in zip_longest(self.lefts, self.rights)]
+    def get_pairs(self):
+        ...
 
 
 def print_tree(node: Node):

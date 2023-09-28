@@ -1,6 +1,7 @@
 import graphviz
 
 from typing import Self
+from itertools import zip_longest
 
 
 class Node:
@@ -91,7 +92,9 @@ def main():
     x = Node("x", k)
     y = Node("y", k)
 
-    print_tree(a).render("tree", view=True, format="png")
+    print_tree(a).render("out/tree", view=True, format="png")
+
+    print(a.get_pairs())
 
 
 if __name__ == "__main__":

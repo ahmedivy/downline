@@ -4,6 +4,22 @@ from typing import Self
 from itertools import zip_longest
 
 
+class Pair:
+    """
+    Can be a pair of nodes or a pair of pairs or a pair of pairs of pairs etc.
+    """
+
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+
+class Commission:
+    def __init__(self, amount: float, pair: Pair):
+        self.amount = amount
+        self.pair = pair
+
+
 class Node:
     def __init__(self, name: str, parent: Self = None):
         self.name = name
@@ -42,8 +58,8 @@ class Node:
     def siblings(self) -> list[Self]:
         return self.parent.children - [self]
 
-    def get_pairs(self) -> list[tuple[Self, Self]]:
-        return [(left, right) for left, right in zip(self.lefts, self.rights)]
+    def get_pairs(self) -> list[Pair]:
+        return [Pair(left, right) for left, right in zip_longest(self.lefts, self.rights)]
 
 
 def print_tree(node: Node):
@@ -56,7 +72,6 @@ def print_tree(node: Node):
 
 
 def main():
-    # 4 level complete tree
     a = Node("a")
     b = Node("b", a)
     c = Node("c", a)

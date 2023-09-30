@@ -1,13 +1,13 @@
 import graphviz
 
 from typing import Self
-from itertools import zip_longest
 
 
 class Commission:
-    def __init__(self, amount: float, pair):
+    def __init__(self, amount: float, source: "Node", action: str):
         self.amount = amount
-        self.pair = pair
+        self.source = source
+        self.action = action
 
 
 class Node:
@@ -46,8 +46,18 @@ class Node:
     def siblings(self) -> list[Self]:
         return self.parent.children - [self]
 
-    def get_pairs(self):
-        ...
+    def get_child_pairs(self):
+        return [(left, right) for left, right in zip(self.lefts, self.rights)]
+
+    def get_pairs_count(self, node: Self) -> int:
+        if not node.lefts or not node.rights:
+            return 0
+
+        return 1 + sum(self.get_pairs_count(child) for child in node.children)
+
+    def print_pairs(self):
+        total = self.get_pairs_count(self)
+        print(f"Total pairs: {total}")
 
 
 def print_tree(node: Node):
@@ -64,9 +74,15 @@ def main():
     b = Node("b", a)
     c = Node("c", a)
 
+    d = Node("d", b)
+    e = Node("e", b)
+
+    f = Node("f", c)
+    g = Node("g", c)
+
     print_tree(a).render("out/tree", view=True, format="png")
 
-    print(a.get_pairs())
+    a.print_pairs()
 
 
 if __name__ == "__main__":

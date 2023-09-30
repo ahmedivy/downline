@@ -1,11 +1,27 @@
 digraph {
-	a [label="a (0)"]
+	a [label=a]
 	a -> b
 	{
-		b [label="b (0)"]
+		b [label=b]
+		b -> d
+		{
+			d [label=d]
+		}
+		b -> e
+		{
+			e [label=e]
+		}
 	}
 	a -> c
 	{
-		c [label="c (0)"]
+		c [label=c]
+		c -> f
+		{
+			f [label=f]
+		}
+		c -> g
+		{
+			g [label=g]
+		}
 	}
 }

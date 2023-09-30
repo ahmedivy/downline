@@ -4,10 +4,14 @@ from typing import Self
 
 
 class Commission:
-    def __init__(self, amount: float, source: "Node", action: str):
+    def __init__(self, amount: float, source: "Node", type: str, level: int = None, pair: int = None):
         self.amount = amount
         self.source = source
-        self.action = action
+        self.type = type
+
+        if self.type == "indirect":
+            self.level = level
+            self.pair = pair
 
 
 class Node:
@@ -18,13 +22,24 @@ class Node:
         self.rights: list[Self] = []
         self.ancestors: list[Self] = parent.ancestors + [parent] if parent else []
 
-        self.balance: float = 0
+        self.commissions: list[Commission] = []
 
         if parent:
             self.parent.add_child(self)
 
-    def calc_commission(self, commission: float = 0.5) -> float:
-        ...
+        self.calc_commissions()
+
+    def calc_commissions(self) -> float:
+        if self.parent:
+            direct = Commission(0.5, self, "direct")
+            self.parent.commissions.append(direct)
+
+        pairs = self.get_child_pairs()
+
+        for i, (left, right) in enumerate(pairs, start=1):
+            level_count = []
+            self.count_children_at_each_level(left, 0, level_count, [left, right])
+            print(level_count)
 
     def add_child(self, child: Self):
         if len(self.lefts) == len(self.rights):
@@ -32,8 +47,17 @@ class Node:
         else:
             self.rights.append(child)
 
+    def count_children_at_each_level(self, node, level, level_counts, children=None):
+        if level >= len(level_counts):
+            level_counts.append(0)
+        level_counts[level] += len(node.children)
+
+        children = children or node.children
+        for child in node.children:
+            self.count_children_at_each_level(child, level + 1, level_counts)
+
     def __repr__(self):
-        return f'{self.name} ({self.balance})'
+        return f'{self.name}'
 
     def __str__(self):
         return self.__repr__()
@@ -50,14 +74,7 @@ class Node:
         return [(left, right) for left, right in zip(self.lefts, self.rights)]
 
     def get_pairs_count(self, node: Self) -> int:
-        if not node.lefts or not node.rights:
-            return 0
-
-        return 1 + sum(self.get_pairs_count(child) for child in node.children)
-
-    def print_pairs(self):
-        total = self.get_pairs_count(self)
-        print(f"Total pairs: {total}")
+        ...
 
 
 def print_tree(node: Node):
@@ -81,8 +98,6 @@ def main():
     g = Node("g", c)
 
     print_tree(a).render("out/tree", view=True, format="png")
-
-    a.print_pairs()
 
 
 if __name__ == "__main__":
